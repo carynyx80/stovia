@@ -174,7 +174,7 @@ export default function Admin() {
                 whiteSpace: "pre-wrap",
                 wordBreak: "break-all",
                 fontSize: 11,
-                color: "#98a2b3",
+                color: "#646777",
               }}
             >
               {proposal || "No proposal prepared."}

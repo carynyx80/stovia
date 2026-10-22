@@ -71,7 +71,9 @@ export default function Terminal() {
     { switchChainAsync } = useSwitchChain(),
     { signMessageAsync } = useSignMessage();
   const [stocks, setStocks] = useState<any[]>([]),
-    [pendingLaunch, setPendingLaunch] = useState<any>(null);
+    [pendingLaunch, setPendingLaunch] = useState<any>(null),
+    [issuerStocks, setIssuerStocks] = useState<any[]>([]),
+    [stockChoice, setStockChoice] = useState("");
   const [wallet, setWallet] = useState(false),
     [tab, setTab] = useState("Trending"),
     [search, setSearch] = useState(""),
@@ -87,12 +89,41 @@ export default function Terminal() {
       .then((r) => r.json())
       .then((d) => setStocks(d.stocks || []))
       .catch(() => {});
+    fetch("/api/issuer-assets")
+      .then((r) => r.json())
+      .then((d) => setIssuerStocks(d.assets || []))
+      .catch(() => {});
     fetch("/api/status")
       .then((r) => r.json())
       .then(setStatus)
       .catch(() => setStatus({ configured: false }));
   }, [refresh]);
 
+  useEffect(() => {
+    if (path === "/create") {
+      const requested = new URLSearchParams(window.location.search).get(
+        "stock",
+      );
+      if (requested && isAddress(requested)) setStockChoice(requested);
+    }
+  }, [path]);
+  const stockOptions = [
+    ...issuerStocks.map((a) => ({
+      ...a,
+      approved: stocks.some(
+        (s) => s.address.toLowerCase() === a.address.toLowerCase(),
+      ),
+    })),
+    ...stocks
+      .filter(
+        (s) =>
+          !issuerStocks.some(
+            (a) => a.address.toLowerCase() === s.address.toLowerCase(),
+          ),
+      )
+      .map((s) => ({ ...s, symbol: s.issuer, name: s.issuer, approved: true })),
+  ].sort((a, b) => a.symbol.localeCompare(b.symbol));
+  const selectedStock = stockOptions.find((a) => a.address === stockChoice);
   const launchABI = parseAbi([
     "function creationFee() view returns(uint256)",
     "function launch(string name,string symbol,uint256 supply,address quote,uint8 fee,string metadataURI) payable returns(address token,address market)",
@@ -100,6 +131,15 @@ export default function Terminal() {
   async function prepareLaunch(form: HTMLFormElement) {
     try {
       setPendingLaunch(null);
+      const selected = new FormData(form).get("stock");
+      if (
+        !stocks.some(
+          (s) => s.address.toLowerCase() === String(selected).toLowerCase(),
+        )
+      )
+        throw Error(
+          "This stock is available for launch setup but has not been approved by the onchain Stovia registry. Registry deployment, verified oracle and eligibility review are still required. No approval or launch transaction has been sent.",
+        );
       if (!address) {
         setWallet(true);
         return;
@@ -224,10 +264,13 @@ export default function Terminal() {
           </span>
           STOVIA<span className="brand-dot">®</span>
         </Link>
+        <div className="sidebar-label">WORKSPACE / 01</div>
         <nav>
-          {nav.map(([n, p]) => (
+          {nav.map(([n, p], index) => (
             <Link key={p} className={path === p ? "active" : ""} href={p}>
+              <span className="nav-index">0{index + 1}</span>
               {n}
+              <ArrowUpRight size={13} />
             </Link>
           ))}
         </nav>
@@ -265,12 +308,12 @@ export default function Terminal() {
             <section className="hero">
               <div className="hero-copy">
                 <div className="eyebrow">
-                  <span /> A NEW EQUITY CULTURE
+                  <span /> INDEPENDENT MARKETS. REAL CONVICTION.
                 </div>
                 <h1>
-                  The stock-backed
+                  A new market
                   <br />
-                  <em>launchpad.</em>
+                  <em>starts here.</em>
                 </h1>
                 <p>
                   Create and trade the next wave of tokens, paired with
@@ -290,32 +333,45 @@ export default function Terminal() {
                   Transparent creator fees <span>·</span> Fully onchain
                 </div>
               </div>
-              <div
-                className="orbital"
-                aria-label="Stock-only market architecture"
-              >
-                <div className="orbit orbit-one" />
-                <div className="orbit orbit-two" />
-                <div className="orbit orbit-three" />
-                <div className="orbit-label top">REAL-WORLD ASSETS</div>
-                <div className="core">
-                  <span>ϟ</span>
-                  <small>STOVIA</small>
+              <div className="launch-blueprint">
+                <div className="blueprint-head">
+                  <span>THE STOVIA MODEL</span>
+                  <span>01—03</span>
                 </div>
-                <div className="asset a1">
-                  <span>↗</span>
+                <div className="blueprint-title">
+                  Real assets.
+                  <br />
+                  <em>New markets.</em>
+                </div>
+                <div className="blueprint-step">
+                  <b>01</b>
                   <div>
-                    Launch tokens<small>COMMUNITY-OWNED</small>
+                    Choose your stock pair
+                    <small>
+                      Issuer-listed assets. Registry-controlled access.
+                    </small>
                   </div>
+                  <ArrowUpRight size={19} />
                 </div>
-                <div className="asset a2">
-                  <span>▥</span>
+                <div className="blueprint-step">
+                  <b>02</b>
                   <div>
-                    Stock-backed<small>VERIFIED QUOTE ASSETS</small>
+                    Launch a fixed-supply token
+                    <small>Your identity. Your permanently locked fee.</small>
                   </div>
+                  <ArrowUpRight size={19} />
                 </div>
-                <div className="orbit-label bottom">
-                  <i /> THE NEXT MARKET STARTS HERE
+                <div className="blueprint-step">
+                  <b>03</b>
+                  <div>
+                    Build toward graduation
+                    <small>Actual reserves. Permanent stock liquidity.</small>
+                  </div>
+                  <ArrowUpRight size={19} />
+                </div>
+                <div className="blueprint-foot">
+                  <span>STOCK-DENOMINATED BY DESIGN</span>
+                  <Layers size={25} />
                 </div>
               </div>
             </section>
@@ -356,9 +412,9 @@ export default function Terminal() {
             <section className="markets" id="markets">
               <div className="section-head">
                 <div>
-                  <div className="eyebrow">THE MARKETPLACE</div>
+                  <div className="eyebrow">MARKET EXPLORER</div>
                   <h2>
-                    Discover your next conviction<span>.</span>
+                    Find your next market<span>.</span>
                   </h2>
                 </div>
                 <Link href="/stocks" className="text-link">
@@ -555,18 +611,44 @@ export default function Terminal() {
                   </select>
                 </label>
                 <label>
-                  Verified stock pair
-                  <select name="stock" disabled={!stocks.length}>
-                    {!stocks.length ? (
-                      <option>No approved assets configured</option>
-                    ) : (
-                      stocks.map((s) => (
-                        <option key={s.address} value={s.address}>
-                          {s.issuer} · {s.address.slice(0, 10)}…
-                        </option>
-                      ))
-                    )}
+                  Stock pair
+                  <select
+                    name="stock"
+                    value={stockChoice}
+                    onChange={(e) => setStockChoice(e.target.value)}
+                    disabled={!stockOptions.length}
+                    required
+                  >
+                    <option value="">
+                      {stockOptions.length
+                        ? `Choose from ${stockOptions.length} issuer-listed stocks`
+                        : "Loading issuer stock directory…"}
+                    </option>
+                    {stockOptions.map((a) => (
+                      <option key={a.address} value={a.address}>
+                        {a.symbol} — {a.name}
+                        {a.approved
+                          ? " · Registry approved"
+                          : " · Approval pending"}
+                      </option>
+                    ))}
                   </select>
+                  <span className="field-note">
+                    Every issuer-listed mainnet stock can be selected for setup.
+                    Launching requires registry approval.
+                  </span>
+                  {selectedStock && (
+                    <span
+                      className={
+                        "approval-label " +
+                        (selectedStock.approved ? "approved" : "pending")
+                      }
+                    >
+                      {selectedStock.approved
+                        ? "Approved in Stovia registry"
+                        : "Selected for setup · Onchain approval pending"}
+                    </span>
+                  )}
                 </label>
                 <label>
                   Creator trading fee <b>{fee}%</b>
@@ -591,7 +673,10 @@ export default function Terminal() {
                 <div className="eyebrow">LAUNCH PREVIEW</div>
                 <div className="token-avatar">{ticker.slice(0, 2) || "ϟ"}</div>
                 <h2>{name || "Your next big idea"}</h2>
-                <p>{ticker || "TICKER"} / Approved stock</p>
+                <p>
+                  {ticker || "TICKER"} /{" "}
+                  {selectedStock?.symbol || "Select a stock"}
+                </p>
                 <dl>
                   <dt>Creator fee</dt>
                   <dd>{fee}%</dd>

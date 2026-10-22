@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Search, ExternalLink } from "lucide-react";
 export default function Stocks() {
   const [data, setData] = useState<any>(null),
@@ -12,7 +13,15 @@ export default function Stocks() {
   }, []);
   return (
     <section className="panel" style={{ marginTop: 30 }}>
-      <h2>Issuer asset directory</h2>
+      <div className="directory-heading">
+        <div>
+          <div className="eyebrow">THE ASSET UNIVERSE</div>
+          <h2>Stock directory</h2>
+        </div>
+        <Link className="primary" href="/create">
+          Set up a launch
+        </Link>
+      </div>
       <p className="muted">
         Read-only metadata from Robinhood’s official API. Directory inclusion
         does not mean approval for Stovia markets. These instruments provide
@@ -45,22 +54,35 @@ export default function Stocks() {
                   .toLowerCase()
                   .includes(q.toLowerCase()),
               )
-              .slice(0, 60)
               .map((a: any) => (
-                <a
-                  className="asset-directory-row"
-                  key={a.address}
-                  target="_blank"
-                  rel="noreferrer"
-                  href={
-                    "https://robinhoodchain.blockscout.com/address/" + a.address
-                  }
-                >
+                <div className="asset-directory-row" key={a.address}>
                   <b>{a.symbol}</b>
-                  <span>{a.name}</span>
-                  <small>Not approved for Stovia</small>
-                  <ExternalLink size={12} />
-                </a>
+                  <Link href={"/create?stock=" + a.address}>{a.name}</Link>
+                  <small
+                    className={a.approvedForStovia ? "registry-approved" : ""}
+                  >
+                    {a.approvedForStovia
+                      ? "Registry approved"
+                      : "Approval pending"}
+                  </small>
+                  <Link
+                    className="stock-setup"
+                    href={"/create?stock=" + a.address}
+                  >
+                    Set up launch ↗
+                  </Link>
+                  <a
+                    aria-label={"View " + a.symbol + " contract"}
+                    target="_blank"
+                    rel="noreferrer"
+                    href={
+                      "https://robinhoodchain.blockscout.com/address/" +
+                      a.address
+                    }
+                  >
+                    <ExternalLink size={12} />
+                  </a>
+                </div>
               ))}
           </div>
         </>

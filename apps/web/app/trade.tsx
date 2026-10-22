@@ -115,17 +115,21 @@ export default function Trade({ address: token }: { address: string }) {
     const c = createChart(chartEl.current, {
       height: 340,
       layout: {
-        background: { type: ColorType.Solid, color: "#12171e" },
-        textColor: "#98a2b3",
+        background: { type: ColorType.Solid, color: "#ffffff" },
+        textColor: "#646777",
       },
       grid: {
-        vertLines: { color: "#202731" },
-        horzLines: { color: "#202731" },
+        vertLines: { color: "#e6e4df" },
+        horzLines: { color: "#e6e4df" },
       },
     });
     const series = c.addSeries(CandlestickSeries, {
-      upColor: "#c8f568",
-      downColor: "#ef4444",
+      upColor: "#3159d8",
+      downColor: "#cf4b31",
+      wickUpColor: "#3159d8",
+      wickDownColor: "#cf4b31",
+      borderUpColor: "#3159d8",
+      borderDownColor: "#cf4b31",
       borderVisible: false,
     });
     series.setData(

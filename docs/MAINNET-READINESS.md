@@ -40,3 +40,7 @@ Next.js frontend and routes; injected wallet connector; mainnet configuration; a
 Complete the implementation gaps, replay production issuer behavior in local/fork tests, obtain independent audit and eligibility approval, configure approved multisig/timelock and treasury, verify every dependency address, provision database/worker/RPC and monitoring, record authorization, simulate deployment, then request explicit authorization for a broadcast. Keep ENABLE_TRANSACTION_UI=false until readiness and deployment receipts are independently verified.
 
 GitHub CI activation is also blocked by the connected OAuth app's missing `workflow` scope. See `docs/ci/github-actions.yml` and the operations guide. Local checks were run; remote GitHub Actions checks have not run.
+
+## Asset selection and visual refresh — 2026-10-21
+
+All issuer-directory mainnet stock assets are available for launch setup, including direct links from the stock directory. Selecting an asset does not grant registry approval. The launch form displays the indexed approval status and refuses unapproved launches before wallet signing. The contract remains the final enforcement boundary. No registry deployment or asset-approval transaction was performed. The UI now uses ivory, ink, burnt orange and blue with Space Grotesk/IBM Plex typography; the previous lime palette has been removed, including chart colors.
