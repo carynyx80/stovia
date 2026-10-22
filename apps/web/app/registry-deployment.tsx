@@ -6,7 +6,7 @@ import {
   useSendTransaction,
   useSwitchChain,
 } from "wagmi";
-import { keccak256, parseAbi, type Hex } from "viem";
+import { keccak256, type Hex } from "viem";
 export default function RegistryDeployment() {
   const [proposal, setProposal] = useState<any>(),
     [accepted, setAccepted] = useState(false),
@@ -14,7 +14,7 @@ export default function RegistryDeployment() {
     [message, setMessage] = useState(""),
     [hash, setHash] = useState(""),
     [confirmed, setConfirmed] = useState<any>();
-  const { address } = useAccount(),
+  const { address, chainId } = useAccount(),
     client = usePublicClient({ chainId: 4663 }),
     { sendTransactionAsync } = useSendTransaction(),
     { switchChainAsync } = useSwitchChain();
@@ -47,6 +47,7 @@ export default function RegistryDeployment() {
   }
   async function deploy() {
     setBusy(true);
+    let stage = "deployment validation";
     try {
       if (!proposal || !client || !address || !accepted)
         throw Error("Connect the deployment wallet and review the terms below");
@@ -58,41 +59,25 @@ export default function RegistryDeployment() {
         );
       if (keccak256(proposal.transaction.data) !== proposal.initcodeHash)
         throw Error("Deployment data integrity check failed");
-      await switchChainAsync({ chainId: 4663 });
-      const abi = parseAbi([
-        "function getOwners() view returns(address[])",
-        "function getThreshold() view returns(uint256)",
-      ]);
-      const [owners, threshold] = await Promise.all([
-        client.readContract({
-          address: proposal.governance,
-          abi,
-          functionName: "getOwners",
-        }),
-        client.readContract({
-          address: proposal.governance,
-          abi,
-          functionName: "getThreshold",
-        }),
-      ]);
-      if (
-        threshold !== 2n ||
-        owners.length !== 2 ||
-        !proposal.owners.every((a: string) =>
-          owners.some((b) => a.toLowerCase() === b.toLowerCase()),
-        )
-      )
-        throw Error("Governance owners or threshold changed");
-      await client.call({
-        account: address,
-        data: proposal.transaction.data,
-        value: 0n,
+      stage = "deployment preflight";
+      setMessage(
+        "Checking governance, simulation, gas and deployment wallet balance…",
+      );
+      const response = await fetch("/api/governance/registry-preflight", {
+        cache: "no-store",
       });
-      const gas = await client.estimateGas({
-        account: address,
-        data: proposal.transaction.data,
-        value: 0n,
-      });
+      const preflight = await response.json();
+      if (!response.ok)
+        throw Error(
+          `${preflight.stage}: ${preflight.error}${preflight.details ? " — " + preflight.details : ""}`,
+        );
+      if (preflight.initcodeHash !== proposal.initcodeHash)
+        throw Error("Preflight proposal mismatch; reload this page");
+      if (chainId !== 4663) {
+        stage = "wallet network switch";
+        await switchChainAsync({ chainId: 4663 });
+      }
+      stage = "wallet transaction review";
       setMessage(
         "Review the registry creation transaction and gas cost in your wallet.",
       );
@@ -100,8 +85,11 @@ export default function RegistryDeployment() {
         chainId: 4663,
         data: proposal.transaction.data,
         value: 0n,
-        gas: (gas * 120n) / 100n,
+        gas: BigInt(preflight.gas),
+        gasPrice: BigInt(preflight.gasPrice),
+        type: "legacy",
       });
+      stage = "receipt confirmation";
       setHash(tx);
       localStorage.setItem("stovia-registry-transaction", tx);
       setMessage("Submitted. Waiting for confirmation…");
@@ -112,7 +100,13 @@ export default function RegistryDeployment() {
         );
       await verify(tx);
     } catch (e) {
-      setMessage(e instanceof Error ? e.message : "Deployment failed");
+      const error = e as any;
+      const detail = error.shortMessage || error.message || "Request failed";
+      const cause =
+        error.details || error.cause?.details || error.cause?.message;
+      setMessage(
+        `${stage}: ${detail}${cause && !detail.includes(cause) ? " — " + cause : ""}`,
+      );
     } finally {
       setBusy(false);
     }
