@@ -1,0 +1,164 @@
+generator client {
+ provider = "prisma-client-js"
+}
+datasource db {
+ provider = "postgresql"
+ url = env("DATABASE_URL")
+}
+model User {
+ address String @id
+ createdAt DateTime @default(now())
+}
+model Block {
+ number BigInt @id
+ hash String @unique
+ parentHash String
+ timestamp DateTime
+ events ProtocolEvent[]
+}
+model ProtocolEvent {
+ id String @id
+ blockNumber BigInt
+ block Block @relation(fields:[blockNumber],references:[number],onDelete:Cascade)
+ address String
+ transactionHash String
+ logIndex Int
+ kind String
+ args Json
+ @@unique([transactionHash, logIndex])
+ @@index([kind,blockNumber])
+}
+model Cursor {
+ id String @id
+ nextBlock BigInt
+}
+model Launch {
+ token String @id
+ market String @unique
+ creator String
+ quote String
+ feePercent Int
+ supply Decimal @db.Decimal(78,0)
+ metadataURI String
+ blockNumber BigInt
+ @@index([creator])
+}
+model Token {
+ address String @id
+ name String
+ symbol String
+ decimals Int
+}
+model ApprovedStock {
+ address String @id
+ issuer String
+ evidenceHash String
+ chainId Int
+ oracle String
+ eligibility String
+ decimals Int
+ approved Boolean @default(false)
+ suspended Boolean @default(false)
+}
+model TradingPair {
+ market String @id
+ token String @unique
+ quote String
+}
+model Pool {
+ market String @id
+ tokenReserve Decimal @db.Decimal(78,0)
+ quoteReserve Decimal @db.Decimal(78,0)
+ graduated Boolean @default(false)
+}
+model Trade {
+ id String @id
+ logIndex Int
+ market String
+ trader String
+ side String
+ tokenAmount Decimal @db.Decimal(78,0)
+ quoteAmount Decimal @db.Decimal(78,0)
+ fee Decimal @db.Decimal(78,0)
+ blockNumber BigInt
+ timestamp DateTime
+ @@index([market,timestamp])
+ @@index([trader])
+}
+model Candle {
+ id String @id
+ market String
+ interval Int
+ timestamp DateTime
+ open Decimal @db.Decimal(78,18)
+ high Decimal @db.Decimal(78,18)
+ low Decimal @db.Decimal(78,18)
+ close Decimal @db.Decimal(78,18)
+ volume Decimal @db.Decimal(78,0)
+ @@unique([market,interval,timestamp])
+}
+model CreatorFee {
+ token String @id
+ generated Decimal @db.Decimal(78,0)
+ protocol Decimal @db.Decimal(78,0)
+}
+model FeeClaim {
+ id String @id
+ token String
+ creator String
+ amount Decimal @db.Decimal(78,0)
+ blockNumber BigInt
+}
+model Graduation {
+ token String @id
+ market String
+ quoteReserve Decimal @db.Decimal(78,0)
+ tokenReserve Decimal @db.Decimal(78,0)
+ blockNumber BigInt
+}
+model WalletActivity {
+ id String @id
+ address String
+ transactionHash String
+ blockNumber BigInt
+ kind String
+}
+model OracleSnapshot {
+ id String @id
+ asset String
+ price Decimal @db.Decimal(78,18)
+ timestamp DateTime
+ valid Boolean
+}
+model ComplianceEvent {
+ id String @id
+ asset String
+ evidence Json
+ timestamp DateTime @default(now())
+}
+
+model UploadChallenge {
+ nonce String @id
+ address String
+ message String
+ expiresAt DateTime
+ usedAt DateTime?
+ createdAt DateTime @default(now())
+ @@index([address,createdAt])
+}
+model TokenMetadata {
+ id String @id @default(uuid())
+ owner String
+ document Json
+ image Bytes?
+ mime String?
+ createdAt DateTime @default(now())
+}
+
+model Holder {
+ token String
+ wallet String
+ balance Decimal @db.Decimal(78,0)
+ @@id([token,wallet])
+ @@index([wallet])
+}
