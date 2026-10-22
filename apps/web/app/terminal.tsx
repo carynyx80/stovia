@@ -113,9 +113,8 @@ export default function Terminal() {
   const stockOptions = [
     ...issuerStocks.map((a) => ({
       ...a,
-      approved: stocks.some(
-        (s) => s.address.toLowerCase() === a.address.toLowerCase(),
-      ),
+      approved: a.approvedForStovia === true,
+      canLaunch: a.canLaunch === true,
     })),
     ...stocks
       .filter(
@@ -142,6 +141,16 @@ export default function Terminal() {
       )
         throw Error(
           "This stock is available for launch setup but has not been approved by the onchain Stovia registry. Registry deployment, verified oracle and eligibility review are still required. No approval or launch transaction has been sent.",
+        );
+      if (
+        !stocks.some(
+          (s) =>
+            s.address.toLowerCase() === String(selected).toLowerCase() &&
+            s.canLaunch === true,
+        )
+      )
+        throw Error(
+          "This stock is approved but its oracle is unavailable or stale. Launching is blocked until a fresh valid price is verified.",
         );
       if (!address) {
         setWallet(true);
@@ -645,7 +654,9 @@ export default function Terminal() {
                       }
                     >
                       {selectedStock.approved
-                        ? "Approved in Stovia registry"
+                        ? selectedStock.canLaunch
+                          ? "Registry approved · Oracle healthy"
+                          : "Registry approved · Oracle unavailable; launch blocked"
                         : "Selected for setup · Onchain approval pending"}
                     </span>
                   )}

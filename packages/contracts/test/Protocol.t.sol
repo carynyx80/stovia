@@ -51,6 +51,9 @@ contract MockOracle {
 }
 
 contract MockEligibility {
+    function supportsAsset(address) external pure returns (bool) {
+        return true;
+    }
     mapping(address => bool) public denied;
 
     function deny(address who, bool d) external {
@@ -299,8 +302,7 @@ contract ProtocolTest {
     function testOracleWrapperSequencerAndPause() public {
         MockOracle uptime = new MockOracle();
         uptime.set(0, block.timestamp - 7200, 1);
-        ValidatedPriceFeed feed =
-            new ValidatedPriceFeed(
+        ValidatedPriceFeed feed = new ValidatedPriceFeed(
             IAggregator(address(stockOracle)), IAggregator(address(uptime)), address(stock), 3600
         );
         (, int256 answer,,,) = feed.latestRoundData();

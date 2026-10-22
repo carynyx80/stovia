@@ -15,6 +15,7 @@ interface IAggregator {
 
 interface IEligibility {
     function eligible(address account, address asset) external view returns (bool);
+    function supportsAsset(address asset) external view returns (bool);
 }
 
 /// @notice Governance must be an independently configured multisig/timelock. Onchain checks cannot certify legal authenticity.
@@ -52,6 +53,11 @@ contract StockRegistry is AccessControl {
         );
         require(a.decimals <= 18 && IERC20Metadata(stock).decimals() == a.decimals, "decimals");
         require(IAggregator(a.oracle).decimals() <= 18, "oracle decimals");
+        require(IEligibility(a.eligibility).supportsAsset(stock), "unsupported eligibility asset");
+        if (a.approved) {
+            uint256 observed = Oracle.read(a.oracle, a.maxAge);
+            require(observed >= a.minPrice && observed <= a.maxPrice, "price deviation");
+        }
         assets[stock] = a;
         emit StockReviewed(stock, a.evidenceHash, a.approved);
     }

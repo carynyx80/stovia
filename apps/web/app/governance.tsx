@@ -14,6 +14,7 @@ const safeAbi = parseAbi([
 ]);
 export default function Governance() {
   const [proposal, setProposal] = useState<any>(null),
+    [approvalState, setApprovalState] = useState<any>(null),
     [accepted, setAccepted] = useState(false),
     [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false),
@@ -23,6 +24,10 @@ export default function Governance() {
     { sendTransactionAsync } = useSendTransaction(),
     { switchChainAsync } = useSwitchChain();
   useEffect(() => {
+    fetch("/api/approval-status")
+      .then((r) => r.json())
+      .then(setApprovalState)
+      .catch(() => {});
     fetch("/api/governance/proposal")
       .then((r) => r.json())
       .then(setProposal)
@@ -170,17 +175,49 @@ export default function Governance() {
             </a>
           </div>
           <aside className="panel summary">
-            <h2>Next: the protocol registry</h2>
+            <h2>Stock approval status</h2>
+            <dl>
+              <dt>Verified approvals</dt>
+              <dd>
+                {approvalState?.assets?.length && !approvalState.error
+                  ? approvalState.assets.filter((a: any) => a.approved).length +
+                    " / " +
+                    approvalState.assets.length
+                  : "Verification unavailable"}
+              </dd>
+              <dt>Registry</dt>
+              <dd>{approvalState?.registry || "Not deployed"}</dd>
+              <dt>Oracle catalog candidates</dt>
+              <dd>35 of 195 · validation required</dd>
+            </dl>
             <p className="muted">
               The governance wallet is ready to be configured as Stovia’s
               administrator. Stovia’s registry, protocol contracts and asset
               approvals have not been deployed or executed.
             </p>
             <div className="callout">
-              Stock approvals remain pending. Each asset still requires verified
-              oracle, issuer/eligibility settings and protocol security review
-              before governance approval transactions can be prepared.
+              Registry infrastructure is implemented and its unsigned deployment
+              was simulated. It approves no assets. Approval operations require
+              both Safe owners and a two-day timelock. Independent security
+              review and per-asset oracle and eligibility evidence are still
+              required.
             </div>
+            <a
+              className="text-link"
+              href="/api/governance/registry-proposal"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Inspect unsigned registry deployment <ExternalLink size={12} />
+            </a>
+            <a
+              className="text-link"
+              href="/api/approval-status"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Inspect live asset approval checks <ExternalLink size={12} />
+            </a>
           </aside>
         </div>
       </section>
