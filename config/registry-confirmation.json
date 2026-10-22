@@ -1,0 +1,14 @@
+{
+  "status": "confirmed",
+  "chainId": 4663,
+  "transactionHash": "0x0c30a77a70737467d2913e265ec8e5da7e5f6d2471a378f41deab4819e57ba2f",
+  "blockNumber": "94602487",
+  "bootstrap": "0x92DC09Ab67FC72b4Cadf5a8AE078E5Ef87ea8566",
+  "timelock": "0x388186DbB99D98f09b45E699496969d45c645494",
+  "registry": "0x8a53aA8c7f9f74Ec3eAcafeC8Ea67b4F3477B24D",
+  "eligibility": "0x3B0132D1E679668ADA72F6c466dfe0BfD42750db",
+  "governance": "0xC22406198bF5296A02A4e2df10357401D3B921D5",
+  "delaySeconds": 172800,
+  "verifiedAt": "2026-10-22T05:44:13.907Z",
+  "stockApprovalsExecuted": false
+}

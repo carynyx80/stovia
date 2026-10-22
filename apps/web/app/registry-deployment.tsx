@@ -21,7 +21,16 @@ export default function RegistryDeployment() {
   useEffect(() => {
     fetch("/api/governance/registry-proposal")
       .then((r) => r.json())
-      .then(setProposal)
+      .then((value) => {
+        setProposal(value);
+        if (value.confirmation?.status === "confirmed") {
+          setConfirmed(value.confirmation);
+          setHash(value.confirmation.transactionHash);
+          setMessage(
+            "Registry infrastructure deployment verified. Stock approvals remain separate.",
+          );
+        }
+      })
       .catch(() => setMessage("Unable to load deployment proposal"));
     setHash(localStorage.getItem("stovia-registry-transaction") || "");
   }, []);
@@ -117,7 +126,9 @@ export default function RegistryDeployment() {
   }
   return (
     <div className="panel">
-      <h2>Deploy the Stovia registry</h2>
+      <h2>
+        {confirmed ? "Stovia registry deployed" : "Deploy the Stovia registry"}
+      </h2>
       <p className="muted">Deployment flow: factory deployment v3</p>
       <p className="muted">
         Creates the stock registry, eligibility controls and a two-day
@@ -208,9 +219,9 @@ export default function RegistryDeployment() {
           <h3>Verified registry</h3>
           <p style={{ wordBreak: "break-all" }}>{confirmed.registry}</p>
           <p className="muted">
-            Set STOCK_REGISTRY_ADDRESS to this address in Vercel, then redeploy
-            the app to enable registry reads. This does not enable trading or
-            approve assets.
+            The verified registry is recorded in Stovia’s deployment
+            configuration. Redeploy the latest GitHub version on Vercel to use
+            it there. This does not enable trading or approve assets.
           </p>
           <a
             className="text-link"

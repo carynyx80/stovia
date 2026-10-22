@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import registryConfirmation from "../../../../../config/registry-confirmation.json";
 import governanceConfirmation from "../../../../../config/governance-confirmation.json";
 import { database, json } from "../../../lib/database";
 export const dynamic = "force-dynamic";
@@ -18,7 +19,8 @@ export async function GET() {
   const contracts = {
     factory: process.env.LAUNCH_FACTORY_ADDRESS || null,
     vault: process.env.FEE_VAULT_ADDRESS || null,
-    registry: process.env.STOCK_REGISTRY_ADDRESS || null,
+    registry:
+      process.env.STOCK_REGISTRY_ADDRESS || registryConfirmation.registry,
     router: process.env.PAYMENT_ROUTER_ADDRESS || null,
   };
   return NextResponse.json(

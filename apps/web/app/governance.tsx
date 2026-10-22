@@ -193,16 +193,15 @@ export default function Governance() {
               <dd>35 of 195 · validation required</dd>
             </dl>
             <p className="muted">
-              The governance wallet is ready to be configured as Stovia’s
-              administrator. Stovia’s registry, protocol contracts and asset
-              approvals have not been deployed or executed.
+              The registry infrastructure is deployed and controlled by the
+              governance Safe through a two-day timelock. Stock approval
+              transactions have not been executed.
             </p>
             <div className="callout">
-              Registry infrastructure is implemented and its unsigned deployment
-              was simulated. It approves no assets. Approval operations require
-              both Safe owners and a two-day timelock. Independent security
-              review and per-asset oracle and eligibility evidence are still
-              required.
+              Registry infrastructure deployment is confirmed. It approved no
+              assets. Approval operations require both Safe owners and a two-day
+              timelock. Independent security review and per-asset oracle and
+              eligibility evidence are still required.
             </div>
             <a
               className="text-link"

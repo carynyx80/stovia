@@ -3,9 +3,9 @@
   "treasury": "0xe02eb26737106e3e8386b8d620341dc1df25798c",
   "deploymentWallet": "0xe02eb26737106e3e8386b8d620341dc1df25798c",
   "governanceMultisig": "0xC22406198bF5296A02A4e2df10357401D3B921D5",
-  "stockRegistry": null,
-  "status": "governance-deployed-protocol-pending",
-  "authorization": "User signed the governance Safe creation transaction; receipt and onchain owners/threshold verified. No Stovia protocol or stock approval transaction has been confirmed.",
+  "stockRegistry": "0x8a53aA8c7f9f74Ec3eAcafeC8Ea67b4F3477B24D",
+  "status": "registry-deployed-assets-pending",
+  "authorization": "User signed registry infrastructure deployment. Exact calldata, factory and governance controls verified. No stock approvals executed.",
   "proposedGovernance": {
     "owners": [
       "0xe02eb26737106e3e8386b8d620341dc1df25798c",
@@ -15,5 +15,8 @@
     "status": "deployed-confirmed",
     "saltNonce": "52532748293968904958683289644884609313285074437308897658817118441577351330517"
   },
-  "governanceDeploymentTransaction": "0xfc90901e2f378b9e59b356110dc76e82949681aca3f5076d69fc0cd0ffbf9fef"
+  "governanceDeploymentTransaction": "0xfc90901e2f378b9e59b356110dc76e82949681aca3f5076d69fc0cd0ffbf9fef",
+  "timelock": "0x388186DbB99D98f09b45E699496969d45c645494",
+  "eligibility": "0x3B0132D1E679668ADA72F6c466dfe0BfD42750db",
+  "registryDeploymentTransaction": "0x0c30a77a70737467d2913e265ec8e5da7e5f6d2471a378f41deab4819e57ba2f"
 }
