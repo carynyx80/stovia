@@ -541,6 +541,25 @@ export default function Terminal() {
               </h1>
               <p>Your token. A verified stock pair. A new beginning.</p>
             </div>
+            {stockOptions.some((stock) => !stock.approved) && (
+              <div
+                className="callout"
+                role="status"
+                style={{ marginBottom: 20 }}
+              >
+                <div>
+                  <strong>Stock approvals pending — expected soon.</strong>
+                  <p style={{ margin: "6px 0" }}>
+                    Final approval requires both governance owners and the
+                    two-day timelock. You can prepare your launch details while
+                    approvals are pending.
+                  </p>
+                  <Link className="text-link" href="/governance">
+                    View approval progress ↗
+                  </Link>
+                </div>
+              </div>
+            )}
             <div className="create-layout">
               <form
                 className="panel"
