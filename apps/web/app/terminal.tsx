@@ -325,9 +325,9 @@ export default function Terminal() {
                   <em>starts here.</em>
                 </h1>
                 <p>
-                  Create and trade the next wave of tokens, paired with
-                  <br className="desktop" /> verified tokenized stocks. Built on
-                  Robinhood Chain.
+                  The stock-backed token launchpad. Create and trade tokens
+                  paired with verified Stock Tokens. Building on Robinhood
+                  Chain.
                 </p>
                 <div className="hero-actions">
                   <Link className="primary" href="/create">
@@ -539,7 +539,10 @@ export default function Terminal() {
                 <br />
                 <em>worth believing in.</em>
               </h1>
-              <p>Your token. A verified stock pair. A new beginning.</p>
+              <p>
+                The stock-backed token launchpad. Create and trade tokens paired
+                with verified Stock Tokens. Building on Robinhood Chain.
+              </p>
             </div>
             {stockOptions.some((stock) => !stock.approved) && (
               <div

@@ -1,5 +1,7 @@
 import "./globals.css";
 import Providers from "./providers";
+const productDescription =
+  "The stock-backed token launchpad. Create and trade tokens paired with verified Stock Tokens. Building on Robinhood Chain.";
 export const metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL ||
@@ -8,15 +10,14 @@ export const metadata = {
         : "http://localhost:3000"),
   ),
   title: "STOVIA — The stock-backed launchpad",
-  description: "Stock-denominated token markets on Robinhood Chain.",
+  description: productDescription,
   icons: {
     icon: [{ url: "/brand/stovia-logo.png", type: "image/png" }],
     apple: [{ url: "/brand/stovia-logo.png", type: "image/png" }],
   },
   openGraph: {
     title: "STOVIA — The stock-backed token launchpad",
-    description:
-      "Create tokens. Pair with Stock Tokens. Building on Robinhood Chain.",
+    description: productDescription,
     images: [
       {
         url: "/brand/stovia-logo.png",
@@ -29,8 +30,7 @@ export const metadata = {
   twitter: {
     card: "summary",
     title: "STOVIA — The stock-backed token launchpad",
-    description:
-      "Create tokens. Pair with Stock Tokens. Building on Robinhood Chain.",
+    description: productDescription,
     images: ["/brand/stovia-logo.png"],
   },
 };
