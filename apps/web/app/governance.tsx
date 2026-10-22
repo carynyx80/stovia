@@ -1,4 +1,5 @@
 "use client";
+import RegistryDeployment from "./registry-deployment";
 import { useEffect, useState } from "react";
 import {
   useAccount,
@@ -114,6 +115,7 @@ export default function Governance() {
       <section className="subpage">
         <div className="eyebrow">GOVERNANCE / CONFIRMED</div>
         <h1>Governance wallet deployed.</h1>
+        <RegistryDeployment />
         <div className="create-layout">
           <div className="panel">
             <ShieldCheck />
