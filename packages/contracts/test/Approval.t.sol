@@ -67,4 +67,42 @@ contract ApprovalTest is ProtocolTest {
         require(!r.hasRole(r.REVIEWER_ROLE(), address(this)));
         require(!ReviewedEligibility(bootstrap.eligibility()).supportsAsset(address(stock)));
     }
+
+    function testGovernedAssetApprovalBatch() public {
+        ThresholdMock safe = new ThresholdMock();
+        RegistryBootstrap bootstrap = new RegistryBootstrap(address(safe));
+        TimelockController lock = TimelockController(payable(bootstrap.timelock()));
+        StockRegistry target = StockRegistry(bootstrap.registry());
+        ReviewedEligibility adapter = ReviewedEligibility(bootstrap.eligibility());
+        address[] memory targets = new address[](2);
+        uint256[] memory values = new uint256[](2);
+        bytes[] memory payloads = new bytes[](2);
+        bytes32 evidence = keccak256("owner approval and verified technical configuration");
+        targets[0] = address(adapter);
+        targets[1] = address(target);
+        payloads[0] = abi.encodeCall(adapter.setAssetPolicy, (address(stock), true, evidence));
+        payloads[1] = abi.encodeCall(
+            target.review,
+            (
+                address(stock),
+                StockRegistry.Asset(
+                    address(stockOracle), address(adapter), 3600, 18, true, false, evidence, 50e18, 200e18
+                )
+            )
+        );
+        bytes32 salt = keccak256("approval batch");
+        vm.prank(address(safe));
+        lock.scheduleBatch(targets, values, payloads, bytes32(0), salt, 2 days);
+        vm.expectRevert();
+        lock.executeBatch(targets, values, payloads, bytes32(0), salt);
+        vm.warp(block.timestamp + 2 days);
+        // Future real feeds must publish a fresh valid price at execution too.
+        stockOracle.set(100e8, block.timestamp, 1);
+        lock.executeBatch(targets, values, payloads, bytes32(0), salt);
+        (uint256 price,) = target.price(address(stock));
+        require(price == 100e18);
+        require(adapter.supportsAsset(address(stock)));
+        require(!adapter.eligible(trader, address(stock)));
+        require(lock.isOperationDone(lock.hashOperationBatch(targets, values, payloads, bytes32(0), salt)));
+    }
 }

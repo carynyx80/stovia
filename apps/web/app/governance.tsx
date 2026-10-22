@@ -1,4 +1,6 @@
 "use client";
+import registryConfirmation from "../../../config/registry-confirmation.json";
+import StockApprovals from "./stock-approvals";
 import RegistryDeployment from "./registry-deployment";
 import { useEffect, useState } from "react";
 import {
@@ -115,6 +117,7 @@ export default function Governance() {
       <section className="subpage">
         <div className="eyebrow">GOVERNANCE / CONFIRMED</div>
         <h1>Governance wallet deployed.</h1>
+        <StockApprovals />
         <RegistryDeployment />
         <div className="create-layout">
           <div className="panel">
@@ -188,7 +191,9 @@ export default function Governance() {
                   : "Verification unavailable"}
               </dd>
               <dt>Registry</dt>
-              <dd>{approvalState?.registry || "Not deployed"}</dd>
+              <dd>
+                {approvalState?.registry || registryConfirmation.registry}
+              </dd>
               <dt>Oracle catalog candidates</dt>
               <dd>35 of 195 · validation required</dd>
             </dl>
