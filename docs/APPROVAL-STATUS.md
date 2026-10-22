@@ -13,7 +13,7 @@ Next required inputs/work:
 3. Complete protocol/security readiness review. No audit or review completion is asserted.
 4. Reviewable deployment and timelock approval transactions, followed by authorized wallet signatures and verified receipts.
 
-`config/mainnet-proposal.json` records public deployment intent only. It contains no keys, no deployment receipts and no claim that contracts exist. The application continues showing pending status until genuine indexed registry approvals exist.
+`config/mainnet-proposal.json` now records verified governance and registry addresses. The registry deployment is confirmed by `config/registry-confirmation.json`. The application reads approval directly from the registry and continues showing pending until governance actually executes the reviewed stock approvals. No keys are stored.
 
 Regenerate the read-only inventory with:
 
@@ -38,3 +38,12 @@ The transaction transfers zero native ETH as value; network gas is separate and 
 ## Governance deployment confirmed
 
 Transaction `0xfc90901e2f378b9e59b356110dc76e82949681aca3f5076d69fc0cd0ffbf9fef` succeeded at Robinhood mainnet block 94572706. The proxy-creation event, exact reviewed transaction calldata, sender, singleton, both owners, threshold 2 and Safe version 1.4.1 were verified. Governance address: `0xC22406198bF5296A02A4e2df10357401D3B921D5`. The earlier unsigned proposal is retained as the historical transaction specification. Current confirmation is in `config/governance-confirmation.json`. No registry or stock-approval deployment is included in this transaction.
+
+
+## Registry deployment confirmed
+
+Transaction `0x0c30a77a70737467d2913e265ec8e5da7e5f6d2471a378f41deab4819e57ba2f` deployed the registry infrastructure at block 94602487. Registry: `0x8a53aA8c7f9f74Ec3eAcafeC8Ea67b4F3477B24D`. Timelock: `0x388186DbB99D98f09b45E699496969d45c645494`. Eligibility: `0x3B0132D1E679668ADA72F6c466dfe0BfD42750db`.
+
+`node scripts/check-approval-readiness.mjs` reads every registry asset and eligibility policy at one chain block and probes the catalog oracle candidates. The generated `stock-approval-readiness.json` records the actual onchain status and missing review inputs. Fresh readable prices alone do not establish that a feed matches the token's economic exposure or that issuer eligibility review is complete.
+
+No application agent can execute registry reviews from the deployment wallet: the registry reviewer is the timelock. A complete reviewed batch must be scheduled by the governance Safe with both signatures and executed after the two-day delay. Evidence hashes must refer to real review records, not synthetic placeholders.
