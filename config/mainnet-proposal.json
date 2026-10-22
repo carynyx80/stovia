@@ -5,5 +5,14 @@
   "governanceMultisig": null,
   "stockRegistry": null,
   "status": "preparation-only",
-  "authorization": "User designated the public address for treasury and deployment; no multisig exists yet. No transaction has been signed or submitted."
+  "authorization": "User designated the public address for treasury and deployment; no multisig exists yet. No transaction has been signed or submitted.",
+  "proposedGovernance": {
+    "owners": [
+      "0xe02eb26737106e3e8386b8d620341dc1df25798c",
+      "0xd2ace63a4936aa1f9a0d571d41e017aa1e430009"
+    ],
+    "threshold": 2,
+    "status": "unsigned-proposal",
+    "saltNonce": "52532748293968904958683289644884609313285074437308897658817118441577351330517"
+  }
 }

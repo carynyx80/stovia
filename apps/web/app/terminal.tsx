@@ -6,6 +6,7 @@ import Records from "./records";
 import Stocks from "./stocks";
 import Admin from "./admin";
 import Leaderboard from "./leaderboard";
+import Governance from "./governance";
 import { usePathname } from "next/navigation";
 import {
   useAccount,
@@ -59,6 +60,7 @@ const nav = [
   ["Graduated", "/graduated"],
   ["Leaderboard", "/leaderboard"],
   ["Portfolio", "/portfolio"],
+  ["Governance", "/governance"],
 ];
 export default function Terminal() {
   const path = usePathname(),
@@ -297,7 +299,9 @@ export default function Terminal() {
         </span>
       </div>
       <main>
-        {path === "/leaderboard" ? (
+        {path === "/governance" ? (
+          <Governance />
+        ) : path === "/leaderboard" ? (
           <Leaderboard />
         ) : path === "/admin" ? (
           <Admin />
