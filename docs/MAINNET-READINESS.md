@@ -38,3 +38,5 @@ Next.js frontend and routes; injected wallet connector; mainnet configuration; a
 ## Release sequence
 
 Complete the implementation gaps, replay production issuer behavior in local/fork tests, obtain independent audit and eligibility approval, configure approved multisig/timelock and treasury, verify every dependency address, provision database/worker/RPC and monitoring, record authorization, simulate deployment, then request explicit authorization for a broadcast. Keep ENABLE_TRANSACTION_UI=false until readiness and deployment receipts are independently verified.
+
+GitHub CI activation is also blocked by the connected OAuth app's missing `workflow` scope. See `docs/ci/github-actions.yml` and the operations guide. Local checks were run; remote GitHub Actions checks have not run.

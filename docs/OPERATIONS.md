@@ -17,3 +17,7 @@ Never run broadcast without explicit authorization and independent security/issu
 ## Source control
 
 The owner supplied https://github.com/carynyx80/stovia.git and authorized pushing completed source. CI runs SDK tests, frontend typecheck/build, Solidity compilation and Foundry tests. Add database integration checks and staging credentials through repository secrets when infrastructure is provisioned. Local preview is the currently available deployment surface; no Sites or Vercel production publication is claimed.
+
+## GitHub workflow authorization
+
+The GitHub OAuth credential rejected the initial push because it lacks `workflow` scope. The source is pushed with the workflow template at `docs/ci/github-actions.yml`. An active copy is retained locally at `.github/workflows/ci.yml` and ignored by Git. The repository owner must activate the template at that path through GitHub or grant the required permission before CI can run. Remote CI is not claimed as passing.

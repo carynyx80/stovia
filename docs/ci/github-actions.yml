@@ -1,0 +1,22 @@
+name: Verify
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm exec prisma generate --schema prisma/schema.prisma
+      - run: pnpm test
+      - run: pnpm typecheck
+      - run: pnpm --filter @stovia/contracts compile
+      - uses: foundry-rs/foundry-toolchain@v1
+      - run: forge test --root packages/contracts -vvv
+      - run: pnpm build
