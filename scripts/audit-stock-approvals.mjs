@@ -1,0 +1,21 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {createRequire} from 'node:module';
+const require=createRequire(new URL('../packages/sdk/package.json',import.meta.url));
+const {isAddress}=require('viem');
+const rpc=process.env.RPC_URL||'https://rpc.mainnet.chain.robinhood.com';
+const destination=path.resolve(process.argv[2]||'docs/stock-approval-inventory.json');
+let id=0;
+async function request(method,params){const response=await fetch(rpc,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:++id,method,params}),signal:AbortSignal.timeout(20000)});if(!response.ok)throw Error('RPC HTTP '+response.status);const data=await response.json();if(data.error)throw Error(data.error.message);return data.result;}
+async function batch(calls){const body=calls.map(c=>({jsonrpc:'2.0',id:++id,...c}));const response=await fetch(rpc,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(20000)});if(!response.ok)throw Error('RPC HTTP '+response.status);const data=await response.json();if(!Array.isArray(data))throw Error('RPC batch unavailable');const map=new Map(data.map(r=>[r.id,r]));return body.map(c=>map.get(c.id));}
+if(Number(BigInt(await request('eth_chainId',[])))!==4663)throw Error('Wrong chain');
+const block=await request('eth_blockNumber',[]);
+const blockData=await request('eth_getBlockByNumber',[block,false]);
+const response=await fetch('https://api.robinhood.com/rhj/assets',{signal:AbortSignal.timeout(20000)});if(!response.ok)throw Error('Issuer API unavailable');const catalog=await response.json();if(!Array.isArray(catalog.assets))throw Error('Unexpected issuer response');
+const config=JSON.parse(await fs.readFile(new URL('../config/mainnet-proposal.json',import.meta.url),'utf8'));
+const assets=[];const seen=new Set();
+for(const asset of catalog.assets){const deployment=asset.deployments?.find(d=>d.chainId===4663&&isAddress(d.contractAddress));if(!deployment||seen.has(deployment.contractAddress.toLowerCase()))continue;seen.add(deployment.contractAddress.toLowerCase());assets.push({symbol:asset.tokenSymbol,name:asset.tokenName,address:deployment.contractAddress,issuerStatus:asset.status,checks:{},approvalStatus:'not-approved',requiredReview:{validatedOracle:null,eligibilityAdapter:null,issuerPermissionEvidence:null,oracleHeartbeat:null,minPrice:null,maxPrice:null}});}
+for(let offset=0;offset<assets.length;offset+=10){const group=assets.slice(offset,offset+10);try{const calls=group.flatMap(asset=>[{method:'eth_getCode',params:[asset.address,block]},{method:'eth_call',params:[{to:asset.address,data:'0x313ce567'},block]}]);const results=await batch(calls);for(let n=0;n<group.length;n++){const code=results[n*2],decimals=results[n*2+1];group[n].checks={contractPresent:typeof code?.result==='string'&&code.result!=='0x',decimals:decimals?.result&&decimals.result!=='0x'?Number(BigInt(decimals.result)):null,...(code?.error||decimals?.error?{error:'RPC check failed'}:{})};}}catch(error){for(const asset of group)asset.checks={error:error.message};}console.log('Inspected '+Math.min(offset+10,assets.length)+'/'+assets.length);}
+const deploymentWalletCode=await request('eth_getCode',[config.deploymentWallet,block]);
+const output={chainId:4663,observedAt:new Date().toISOString(),blockNumber:BigInt(block).toString(),blockHash:blockData.hash,source:'https://api.robinhood.com/rhj/assets',deployment:config,deploymentWalletContractPresent:deploymentWalletCode!=='0x',summary:{issuerListed:assets.length,contractsPresent:assets.filter(a=>a.checks.contractPresent).length,decimalChecksPassed:assets.filter(a=>a.checks.decimals===18).length,onchainApprovalsExecuted:0},blockers:['No governance multisig exists','No Stovia registry deployed','Per-asset oracle proxies and heartbeat validation incomplete','Eligibility adapter and issuer-use evidence incomplete','Independent audit/readiness review incomplete','Deployment and governance transactions require wallet signatures'],assets};
+await fs.mkdir(path.dirname(destination),{recursive:true});await fs.writeFile(destination,JSON.stringify(output,null,2)+'\n');console.log(JSON.stringify(output.summary));console.log('Inventory saved to '+destination+'. No approvals were submitted.');

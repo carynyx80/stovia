@@ -1,0 +1,9 @@
+{
+  "chainId": 4663,
+  "treasury": "0xe02eb26737106e3e8386b8d620341dc1df25798c",
+  "deploymentWallet": "0xe02eb26737106e3e8386b8d620341dc1df25798c",
+  "governanceMultisig": null,
+  "stockRegistry": null,
+  "status": "preparation-only",
+  "authorization": "User designated the public address for treasury and deployment; no multisig exists yet. No transaction has been signed or submitted."
+}
