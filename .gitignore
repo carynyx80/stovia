@@ -1,0 +1,13 @@
+node_modules
+.next
+.env
+.env.*
+!.env.example
+coverage
+out
+cache
+.next-dev
+*.tsbuildinfo
+broadcast
+.DS_Store
+/packages/contracts/artifacts/

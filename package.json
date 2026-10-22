@@ -1,0 +1,20 @@
+{
+  "name": "stovia",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter @stovia/web dev",
+    "build": "pnpm --filter @stovia/web build",
+    "test": "tsx --test tests/*.test.ts",
+    "typecheck": "pnpm --filter @stovia/web typecheck && tsc -p tsconfig.services.json",
+    "db:generate": "prisma generate --schema prisma/schema.prisma",
+    "db:push": "prisma db push --schema prisma/schema.prisma",
+    "contracts:compile": "pnpm --filter @stovia/contracts compile"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "@types/node": "^22.0.0",
+    "prisma": "^6.19.0",
+    "@prisma/client": "^6.19.0"
+  }
+}
