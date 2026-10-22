@@ -80,7 +80,6 @@ header {
 .brand-icon {
   display: flex;
   color: var(--accent);
-  transform: rotate(8deg);
 }
 .brand-dot {
   font: 10px var(--mono);
@@ -592,9 +591,9 @@ footer {
 footer .brand {
   font-size: 19px;
 }
-footer .brand-icon > svg {
-  height: 24px;
-  width: 19px;
+footer .brand-icon .stovia-mark {
+  height: 36px;
+  width: 36px;
 }
 footer p {
   color: #8b8c91;
@@ -1327,9 +1326,9 @@ dd {
   .header-right .wallet {
     padding: 11px;
   }
-  .brand-icon > svg {
-    width: 22px;
-    height: 29px;
+  .brand-icon .stovia-mark {
+    width: 42px;
+    height: 42px;
   }
 }
 
@@ -1374,4 +1373,19 @@ dd {
     grid-column: 3;
     grid-row: 1 / span 3;
   }
+}
+
+.stovia-mark {
+  display: block;
+  object-fit: contain;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+}
+.token-avatar:has(.stovia-mark) {
+  background: var(--bg);
+}
+.token-avatar .stovia-mark {
+  width: 65px;
+  height: 65px;
 }

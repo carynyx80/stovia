@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import BrandMark from "./brand-mark";
 import Trade from "./trade";
 import Records from "./records";
 import Stocks from "./stocks";
@@ -257,12 +258,7 @@ export default function Terminal() {
       <header>
         <Link className="brand" href="/">
           <span className="brand-icon">
-            <svg viewBox="0 0 28 36" width="28" height="36" aria-hidden="true">
-              <path
-                d="M17 1 4 20h12L10 35l15-21H13l7-13Z"
-                fill="currentColor"
-              />
-            </svg>
+            <BrandMark />
           </span>
           STOVIA<span className="brand-dot">®</span>
         </Link>
@@ -675,7 +671,9 @@ export default function Terminal() {
               </form>
               <aside className="panel summary">
                 <div className="eyebrow">LAUNCH PREVIEW</div>
-                <div className="token-avatar">{ticker.slice(0, 2) || "ϟ"}</div>
+                <div className="token-avatar">
+                  {ticker ? ticker.slice(0, 2) : <BrandMark />}
+                </div>
                 <h2>{name || "Your next big idea"}</h2>
                 <p>
                   {ticker || "TICKER"} /{" "}
@@ -773,12 +771,7 @@ export default function Terminal() {
       <footer>
         <Link className="brand" href="/">
           <span className="brand-icon">
-            <svg viewBox="0 0 28 36" width="28" height="36" aria-hidden="true">
-              <path
-                d="M17 1 4 20h12L10 35l15-21H13l7-13Z"
-                fill="currentColor"
-              />
-            </svg>
+            <BrandMark />
           </span>
           STOVIA
         </Link>

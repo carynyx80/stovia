@@ -1,5 +1,7 @@
 # STOVIA
 
+<img src="apps/web/public/brand/stovia-logo.png" width="112" alt="Stovia logo" />
+
 Stock-denominated token launchpad development monorepo. **Unaudited, undeployed, and not approved for real funds.** No deployment or real-money transaction was performed.
 
 ## Run locally
