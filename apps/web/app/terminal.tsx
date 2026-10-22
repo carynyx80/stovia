@@ -630,7 +630,7 @@ export default function Terminal() {
                   >
                     <option value="">
                       {stockOptions.length
-                        ? `Choose from ${stockOptions.length} issuer-listed stocks`
+                        ? `Choose from ${stockOptions.length} supported stocks`
                         : "Loading issuer stock directory…"}
                     </option>
                     {stockOptions.map((a) => (
@@ -643,8 +643,8 @@ export default function Terminal() {
                     ))}
                   </select>
                   <span className="field-note">
-                    Every issuer-listed mainnet stock can be selected for setup.
-                    Launching requires registry approval.
+                    Only supported stocks with matching oracle integrations are
+                    listed. Launching requires registry approval.
                   </span>
                   {selectedStock && (
                     <span

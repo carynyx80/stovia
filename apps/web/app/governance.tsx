@@ -195,7 +195,7 @@ export default function Governance() {
                 {approvalState?.registry || registryConfirmation.registry}
               </dd>
               <dt>Oracle catalog candidates</dt>
-              <dd>35 of 195 · validation required</dd>
+              <dd>35 supported stocks</dd>
             </dl>
             <p className="muted">
               The registry infrastructure is deployed and controlled by the
@@ -359,7 +359,7 @@ export default function Governance() {
               The transaction value is zero; network gas is separate.
             </p>
             <div className="callout">
-              All 195 stock candidates still require registry, oracle and
+              Supported stock candidates still require registry, oracle and
               eligibility review. Creating this wallet does not approve them.
             </div>
             <a

@@ -106,7 +106,7 @@ export default function StockApprovals() {
       <h2>Approve stocks · governance batch</h2>
       <p className="muted">
         {state
-          ? `${state.assetCount} stocks with validated catalog feeds. ${state.excludedCount} assets excluded because no matching feed was found.`
+          ? `${state.assetCount} supported stocks with validated catalog feeds.`
           : "Loading live governance state…"}
       </p>
       <p className="muted">

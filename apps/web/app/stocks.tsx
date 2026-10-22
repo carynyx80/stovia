@@ -23,10 +23,10 @@ export default function Stocks() {
         </Link>
       </div>
       <p className="muted">
-        Read-only metadata from Robinhood’s official API. Directory inclusion
-        does not mean approval for Stovia markets. These instruments provide
-        economic exposure; they do not confer ownership of the underlying
-        company.
+        Supported stocks with matching oracle integrations, using metadata from
+        Robinhood’s official API. Directory inclusion does not mean approval for
+        Stovia markets. These instruments provide economic exposure; they do not
+        confer ownership of the underlying company.
       </p>
       <label className="directory-search">
         <Search size={16} />
@@ -44,7 +44,7 @@ export default function Stocks() {
       ) : (
         <>
           <p className="muted">
-            {data.assets.length} mainnet deployments observed ·{" "}
+            {data.assets.length} supported stocks ·{" "}
             {new Date(data.observedAt).toLocaleString()}
           </p>
           <div className="asset-directory">

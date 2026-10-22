@@ -5,11 +5,15 @@ import {
   parseAbi,
   type Address,
 } from "viem";
+import stockBatch from "../../../docs/stock-approval-batch.json";
 import deployment from "../../../config/mainnet-proposal.json";
 import {
   approvalSummary,
   type RegistryAsset,
 } from "../../../packages/sdk/approval";
+const supportedAddresses = new Set(
+  stockBatch.assets.map((asset) => asset.address.toLowerCase()),
+);
 const abi = parseAbi([
   "function assets(address stock) view returns(address oracle,address eligibility,uint64 maxAge,uint8 decimals,bool approved,bool suspended,bytes32 evidenceHash,uint256 minPrice,uint256 maxPrice)",
   "function price(address stock) view returns(uint256,uint8)",
@@ -29,7 +33,7 @@ export async function stockRegistrySnapshot() {
     const d = a.deployments?.find(
       (d: any) => d.chainId === 4663 && isAddress(d.contractAddress),
     );
-    return d
+    return d && supportedAddresses.has(d.contractAddress.toLowerCase())
       ? [
           {
             address: d.contractAddress as Address,
