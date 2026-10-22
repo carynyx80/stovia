@@ -13,3 +13,5 @@ broadcast
 /packages/contracts/artifacts/
 # Retained locally; GitHub OAuth lacks workflow scope. Tracked template is in docs/ci.
 .github/workflows/ci.yml
+
+.next-dev-rpc

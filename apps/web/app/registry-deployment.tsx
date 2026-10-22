@@ -66,6 +66,10 @@ export default function RegistryDeployment() {
       const response = await fetch("/api/governance/registry-preflight", {
         cache: "no-store",
       });
+      if (!response.headers.get("content-type")?.includes("application/json"))
+        throw Error(
+          "This server is running an outdated deployment route. Restart the local server or redeploy the latest GitHub commit on Vercel.",
+        );
       const preflight = await response.json();
       if (!response.ok)
         throw Error(
@@ -114,6 +118,7 @@ export default function RegistryDeployment() {
   return (
     <div className="panel">
       <h2>Deploy the Stovia registry</h2>
+      <p className="muted">Deployment flow: RPC preflight v2</p>
       <p className="muted">
         Creates the stock registry, eligibility controls and a two-day
         governance timelock on Robinhood Chain. No assets are approved by this
