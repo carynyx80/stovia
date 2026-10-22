@@ -298,7 +298,7 @@ export default function Terminal() {
         <span>
           <Radio size={12} /> ROBINHOOD CHAIN MAINNET
         </span>
-        <span>Stock-backed pairs. Onchain possibilities.</span>
+        <span>$STOVIA coming soon on Robinhood.</span>
         <span className="strip-right">
           MAINNET CONFIGURED <i />
         </span>
@@ -808,7 +808,7 @@ export default function Terminal() {
           </span>
           STOVIA
         </Link>
-        <p>Real assets. New possibilities.</p>
+        <p>$STOVIA coming soon on Robinhood.</p>
         <div>
           <a
             href="https://docs.robinhood.com/chain/connecting/"
@@ -816,6 +816,25 @@ export default function Terminal() {
             rel="noreferrer"
           >
             Network docs <ExternalLink size={12} />
+          </a>
+          <a
+            href="https://x.com/Stoviadxyz"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Follow Stovia on X (opens in a new tab)"
+            title="Follow @Stoviadxyz on X"
+            style={{ minHeight: 44, minWidth: 44, justifyContent: "center" }}
+          >
+            <svg
+              width="17"
+              height="17"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.64 7.584H.47l8.6-9.835L0 1.154h7.594l5.243 6.932 6.064-6.933Zm-1.29 19.491h2.039L6.487 3.24H4.3l13.31 17.404Z" />
+            </svg>
+            <span>@Stoviadxyz</span>
           </a>
           <Link href="/creators">For creators</Link>
           <button
