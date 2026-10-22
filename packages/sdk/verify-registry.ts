@@ -1,5 +1,7 @@
 import {
   keccak256,
+  getCreate2Address,
+  slice,
   parseAbi,
   stringToHex,
   zeroAddress,
@@ -29,15 +31,34 @@ export async function verifyRegistryDeployment(
   ]);
   if (
     receipt.status !== "success" ||
-    !receipt.contractAddress ||
-    tx.to ||
+    (proposal.transaction.to
+      ? tx.to?.toLowerCase() !== proposal.transaction.to.toLowerCase()
+      : !receipt.contractAddress || !!tx.to) ||
     tx.value !== 0n ||
     tx.from.toLowerCase() !== proposal.transaction.from.toLowerCase() ||
     tx.input !== proposal.transaction.data ||
-    keccak256(tx.input) !== proposal.initcodeHash
+    keccak256(tx.input) !==
+      (proposal.transactionDataHash || proposal.initcodeHash)
   )
     throw Error("Receipt does not match the proposed registry deployment");
-  const bootstrap = receipt.contractAddress as Address;
+  let bootstrap = receipt.contractAddress as Address;
+  if (proposal.transaction.to) {
+    const code = await client.getCode({ address: proposal.factory.address });
+    if (!code || keccak256(code) !== proposal.factory.runtimeHash)
+      throw Error("Factory runtime mismatch");
+    const derived = getCreate2Address({
+      from: proposal.factory.address,
+      salt: proposal.salt,
+      bytecodeHash: proposal.initcodeHash,
+    });
+    if (
+      derived.toLowerCase() !== proposal.predictedBootstrap.toLowerCase() ||
+      slice(tx.input, 0, 32) !== proposal.salt ||
+      keccak256(slice(tx.input, 32)) !== proposal.initcodeHash
+    )
+      throw Error("Factory deployment derivation mismatch");
+    bootstrap = derived;
+  }
   const read = (address: Address, functionName: string, args: any[] = []) =>
     client.readContract({ address, abi: getters, functionName, args });
   const [timelock, registry, eligibility] = (await Promise.all(

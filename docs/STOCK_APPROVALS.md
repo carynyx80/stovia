@@ -21,3 +21,9 @@ A hash records evidence; it does not establish issuer permission or legal eligib
 ## Verification
 
 71 Foundry test executions pass, including rejection of stale prices during approval, policy access controls, scoped and expiring eligibility, revocation, timelock roles and delay. SDK tests cover unavailable registry, suspension, approval and stale-oracle launch blocking. These checks do not certify every real issuer integration or substitute for an independent audit.
+
+## Wallet-compatible registry deployment
+
+The active signing proposal is now `registry-factory-proposal.json`. It calls the canonical Arachnid deterministic deployment proxy at `0x4e59b44847b379578588920cA78FbF26c0B4956C`, with zero value and salt-prefixed creation bytecode. This supplies a normal transaction recipient instead of submitting an empty-recipient creation request. The runtime is pinned and verified before simulation. The factory source is https://github.com/Arachnid/deterministic-deployment-proxy/blob/master/source/deterministic-deployment-proxy.yul.
+
+Reproduce preparation with `node scripts/prepare-registry-factory.mjs`. The server checks the factory runtime, verifies the predicted bootstrap address is unused, simulates the complete call and checks the returned address before requesting a wallet signature. Receipt verification supports both the historical direct creation proposal and the factory proposal. A successful factory receipt has no top-level contractAddress; its bootstrap address is derived from the verified salt and initcode hash. This changes deployment transport only, not the governance constructor arguments or contract implementation. Wallet signing still requires user verification in Zerion; simulation alone cannot prove wallet compatibility.

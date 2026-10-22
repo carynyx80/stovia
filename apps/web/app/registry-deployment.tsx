@@ -57,7 +57,7 @@ export default function RegistryDeployment() {
         throw Error(
           "A deployment transaction is already recorded. Verify it before sending another.",
         );
-      if (keccak256(proposal.transaction.data) !== proposal.initcodeHash)
+      if (keccak256(proposal.transaction.data) !== proposal.transactionDataHash)
         throw Error("Deployment data integrity check failed");
       stage = "deployment preflight";
       setMessage(
@@ -75,7 +75,7 @@ export default function RegistryDeployment() {
         throw Error(
           `${preflight.stage}: ${preflight.error}${preflight.details ? " — " + preflight.details : ""}`,
         );
-      if (preflight.initcodeHash !== proposal.initcodeHash)
+      if (preflight.transactionDataHash !== proposal.transactionDataHash)
         throw Error("Preflight proposal mismatch; reload this page");
       if (chainId !== 4663) {
         stage = "wallet network switch";
@@ -87,11 +87,11 @@ export default function RegistryDeployment() {
       );
       const tx = await sendTransactionAsync({
         chainId: 4663,
+        to: proposal.transaction.to,
         data: proposal.transaction.data,
         value: 0n,
         gas: BigInt(preflight.gas),
         gasPrice: BigInt(preflight.gasPrice),
-        type: "legacy",
       });
       stage = "receipt confirmation";
       setHash(tx);
@@ -118,7 +118,7 @@ export default function RegistryDeployment() {
   return (
     <div className="panel">
       <h2>Deploy the Stovia registry</h2>
-      <p className="muted">Deployment flow: RPC preflight v2</p>
+      <p className="muted">Deployment flow: factory deployment v3</p>
       <p className="muted">
         Creates the stock registry, eligibility controls and a two-day
         governance timelock on Robinhood Chain. No assets are approved by this
@@ -128,6 +128,11 @@ export default function RegistryDeployment() {
         Value: 0 ETH plus network gas. Both Safe owners must authorize future
         approval scheduling. These custom contracts have not received an
         independent security audit.
+      </p>
+      <p className="muted">
+        Uses the verified deployment factory as the transaction recipient for
+        wallet compatibility. The contract addresses are deterministic;
+        governance controls remain unchanged.
       </p>
       {proposal && (
         <p className="muted" style={{ wordBreak: "break-all" }}>

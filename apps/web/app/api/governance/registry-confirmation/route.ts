@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createPublicClient, http, isHash } from "viem";
-import proposal from "../../../../../../docs/registry-deployment-proposal.json";
+import original from "../../../../../../docs/registry-deployment-proposal.json";
+import proposal from "../../../../../../docs/registry-factory-proposal.json";
 import { verifyRegistryDeployment } from "../../../../../../packages/sdk/verify-registry";
 export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
@@ -18,7 +19,11 @@ export async function GET(request: Request) {
       ),
     });
     return NextResponse.json(
-      await verifyRegistryDeployment(client, proposal, hash),
+      await verifyRegistryDeployment(
+        client,
+        (await client.getTransaction({ hash })).to ? proposal : original,
+        hash,
+      ),
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch {

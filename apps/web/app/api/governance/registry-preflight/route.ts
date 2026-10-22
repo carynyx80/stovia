@@ -8,7 +8,7 @@ import {
   type Address,
   type Hex,
 } from "viem";
-import proposal from "../../../../../../docs/registry-deployment-proposal.json";
+import proposal from "../../../../../../docs/registry-factory-proposal.json";
 export const dynamic = "force-dynamic";
 export async function GET() {
   let stage = "RPC connection";
@@ -20,8 +20,26 @@ export async function GET() {
       ),
     });
     if ((await client.getChainId()) !== 4663) throw Error("Wrong RPC chain");
-    if (keccak256(proposal.transaction.data as Hex) !== proposal.initcodeHash)
+    if (
+      keccak256(proposal.transaction.data as Hex) !==
+      proposal.transactionDataHash
+    )
       throw Error("Proposal integrity mismatch");
+    stage = "factory verification";
+    const factoryCode = await client.getCode({
+      address: proposal.factory.address as Address,
+    });
+    if (!factoryCode || keccak256(factoryCode) !== proposal.factory.runtimeHash)
+      throw Error("Factory runtime mismatch");
+    const existing = await client.getCode({
+      address: proposal.predictedBootstrap as Address,
+    });
+    if (existing && existing !== "0x")
+      throw Error(
+        "Registry infrastructure already exists at " +
+          proposal.predictedBootstrap +
+          ". Verify its deployment receipt instead of deploying again.",
+      );
     stage = "governance verification";
     const abi = parseAbi([
       "function getOwners() view returns(address[])",
@@ -49,11 +67,17 @@ export async function GET() {
       throw Error("Safe configuration changed");
     const request = {
       account: proposal.transaction.from as Address,
+      to: proposal.transaction.to as Address,
       data: proposal.transaction.data as Hex,
       value: 0n,
     };
     stage = "contract creation simulation";
-    await client.call(request);
+    const simulation = await client.call(request);
+    if (
+      simulation.data?.toLowerCase() !==
+      proposal.predictedBootstrap.toLowerCase()
+    )
+      throw Error("Factory simulation address mismatch");
     stage = "gas estimation";
     const [estimate, gasPrice, balance] = await Promise.all([
       client.estimateGas(request),
@@ -69,7 +93,7 @@ export async function GET() {
     return NextResponse.json(
       {
         chainId: 4663,
-        initcodeHash: proposal.initcodeHash,
+        transactionDataHash: proposal.transactionDataHash,
         gas: gas.toString(),
         gasPrice: gasPrice.toString(),
         estimatedMaxGasCostWei: cost.toString(),
