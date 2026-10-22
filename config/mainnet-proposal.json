@@ -2,17 +2,18 @@
   "chainId": 4663,
   "treasury": "0xe02eb26737106e3e8386b8d620341dc1df25798c",
   "deploymentWallet": "0xe02eb26737106e3e8386b8d620341dc1df25798c",
-  "governanceMultisig": null,
+  "governanceMultisig": "0xC22406198bF5296A02A4e2df10357401D3B921D5",
   "stockRegistry": null,
-  "status": "preparation-only",
-  "authorization": "User designated the public address for treasury and deployment; no multisig exists yet. No transaction has been signed or submitted.",
+  "status": "governance-deployed-protocol-pending",
+  "authorization": "User signed the governance Safe creation transaction; receipt and onchain owners/threshold verified. No Stovia protocol or stock approval transaction has been confirmed.",
   "proposedGovernance": {
     "owners": [
       "0xe02eb26737106e3e8386b8d620341dc1df25798c",
       "0xd2ace63a4936aa1f9a0d571d41e017aa1e430009"
     ],
     "threshold": 2,
-    "status": "unsigned-proposal",
+    "status": "deployed-confirmed",
     "saltNonce": "52532748293968904958683289644884609313285074437308897658817118441577351330517"
-  }
+  },
+  "governanceDeploymentTransaction": "0xfc90901e2f378b9e59b356110dc76e82949681aca3f5076d69fc0cd0ffbf9fef"
 }

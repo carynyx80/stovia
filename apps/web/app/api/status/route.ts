@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import governanceConfirmation from "../../../../../config/governance-confirmation.json";
 import { database, json } from "../../../lib/database";
 export const dynamic = "force-dynamic";
 export async function GET() {
@@ -29,7 +30,9 @@ export async function GET() {
         dbReady &&
         !!contracts.factory,
       contracts,
-      governance: process.env.GOVERNANCE_MULTISIG || null,
+      governance:
+        process.env.GOVERNANCE_MULTISIG || governanceConfirmation.address,
+      governanceConfirmation,
       stats,
       timestamp: new Date().toISOString(),
     }),

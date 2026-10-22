@@ -1,0 +1,17 @@
+{
+  "chainId": 4663,
+  "address": "0xC22406198bF5296A02A4e2df10357401D3B921D5",
+  "transactionHash": "0xfc90901e2f378b9e59b356110dc76e82949681aca3f5076d69fc0cd0ffbf9fef",
+  "blockNumber": "94572706",
+  "blockHash": "0x6b1af7745361f3da3442a9a7ce919321eec601575af4aa9c1e37b03dc7a8e375",
+  "status": "confirmed",
+  "owners": [
+    "0xE02EB26737106e3E8386b8D620341dC1DF25798C",
+    "0xd2ACE63A4936AA1f9a0d571D41e017Aa1e430009"
+  ],
+  "threshold": 2,
+  "singleton": "0x29fcB43b46531BcA003ddC8FCB67FFE91900C762",
+  "version": "1.4.1",
+  "verifiedAt": "2026-10-22T04:54:23.224Z",
+  "stockApprovalsExecuted": 0
+}

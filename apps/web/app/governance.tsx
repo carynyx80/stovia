@@ -104,6 +104,87 @@ export default function Governance() {
       setBusy(false);
     }
   }
+  if (proposal?.confirmation?.status === "confirmed")
+    return (
+      <section className="subpage">
+        <div className="eyebrow">GOVERNANCE / CONFIRMED</div>
+        <h1>Governance wallet deployed.</h1>
+        <div className="create-layout">
+          <div className="panel">
+            <ShieldCheck />
+            <h2>Confirmed on Robinhood Chain</h2>
+            <p className="muted">
+              The creation receipt succeeded. Both owners, the 2-of-2 threshold
+              and the Safe singleton were verified onchain. No additional Safe
+              deployment is needed.
+            </p>
+            <h3>Governance Safe</h3>
+            <p
+              style={{
+                wordBreak: "break-all",
+                fontFamily: "var(--mono)",
+                fontSize: 12,
+              }}
+            >
+              {proposal.confirmation.address}
+            </p>
+            <dl>
+              <dt>Network</dt>
+              <dd>Robinhood Chain · 4663</dd>
+              <dt>Threshold at verification</dt>
+              <dd>2 of 2</dd>
+              <dt>Safe version</dt>
+              <dd>{proposal.confirmation.version}</dd>
+              <dt>Deployment block</dt>
+              <dd>{proposal.confirmation.blockNumber}</dd>
+            </dl>
+            <h3>Verified owners</h3>
+            {proposal.confirmation.owners.map((owner: string) => (
+              <p
+                key={owner}
+                style={{
+                  wordBreak: "break-all",
+                  fontFamily: "var(--mono)",
+                  fontSize: 11,
+                }}
+              >
+                {owner}
+              </p>
+            ))}
+            <p className="muted">
+              Verified{" "}
+              {new Date(proposal.confirmation.verifiedAt).toLocaleString()}.
+              This records the confirmed deployment and configuration at
+              verification time.
+            </p>
+            <a
+              className="primary"
+              href={
+                "https://robinhoodchain.blockscout.com/tx/" +
+                proposal.confirmation.transactionHash
+              }
+              target="_blank"
+              rel="noreferrer"
+            >
+              View confirmed transaction <ExternalLink size={14} />
+            </a>
+          </div>
+          <aside className="panel summary">
+            <h2>Next: the protocol registry</h2>
+            <p className="muted">
+              The governance wallet is ready to be configured as Stovia’s
+              administrator. Stovia’s registry, protocol contracts and asset
+              approvals have not been deployed or executed.
+            </p>
+            <div className="callout">
+              Stock approvals remain pending. Each asset still requires verified
+              oracle, issuer/eligibility settings and protocol security review
+              before governance approval transactions can be prepared.
+            </div>
+          </aside>
+        </div>
+      </section>
+    );
   return (
     <section className="subpage">
       <div className="eyebrow">GOVERNANCE / SETUP</div>

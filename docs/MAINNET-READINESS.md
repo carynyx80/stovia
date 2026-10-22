@@ -16,7 +16,7 @@ Next.js frontend and routes; injected wallet connector; mainnet configuration; a
 
 ## External blockers
 
-1. No approved issuer asset, eligibility/compliance provider, treasury, multisig or oracle proxy has been supplied or verified for this protocol. No approvals have been entered in the registry.
+1. The treasury/deployment wallet has been supplied and the 2-of-2 governance Safe has been deployed and verified. No approved issuer asset, eligibility/compliance provider or oracle proxy has been verified for this protocol. No approvals have been entered in the registry.
 2. No executed, issuer-permitted ETH/stock liquidity route has been validated. ETH checkout is disabled. Conversion adapter implementations must be reviewed against their actual venue contracts; reverse ETH routing is not implemented.
 3. No independent security audit, issuer/legal sign-off, production database, persistent worker host, production RPC contract, or monitoring service is connected.
 4. No protocol deployment exists. No real-money action has been submitted. Deployment requires explicit human authorization plus independent readiness review. A script boolean is an operational guard, not evidence of approval.
@@ -44,3 +44,5 @@ GitHub CI activation is also blocked by the connected OAuth app's missing `workf
 ## Asset selection and visual refresh — 2026-10-21
 
 All issuer-directory mainnet stock assets are available for launch setup, including direct links from the stock directory. Selecting an asset does not grant registry approval. The launch form displays the indexed approval status and refuses unapproved launches before wallet signing. The contract remains the final enforcement boundary. No registry deployment or asset-approval transaction was performed. The UI now uses ivory, ink, burnt orange and blue with Space Grotesk/IBM Plex typography; the previous lime palette has been removed, including chart colors.
+
+Governance Safe `0xC22406198bF5296A02A4e2df10357401D3B921D5` is confirmed by transaction `0xfc90901e2f378b9e59b356110dc76e82949681aca3f5076d69fc0cd0ffbf9fef` at block 94572706. This is a governance deployment only; protocol deployment and stock approvals remain pending.
